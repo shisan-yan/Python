@@ -1,0 +1,129 @@
+1. 模块的导入
+	1.1 添加导入新的模块
+	如果导入的模块不在本路径下，我们需要先将路径加入到path中
+	import sys
+	sys.path.expend('需要导入的路径')
+
+	1.2 重新加载导入的模块
+	如果我们在导入一个模块后，有人修改了模块，我们在重新运行或者导入之前会一直调用改变前的模块代码，如果我们想不重新运行直接加载最新的模块代码的时候，可以使用reload
+	from imp import *
+	reload('需要导入的模块的路径地址')
+
+	1.3 循环导入
+	A模块需要导入B模块，但是在B模块中却引用了A模块，这样就会出现循环导入的问题
+
+2.  == 与 is
+	== 判断两个变量的值是否相当
+	is判断两个是不是一个东西<也就是是不是同样的指向同一个物理地址引用>
+	注意：两个变量的值在-6到127之间，如果两个变量的值是相同的，那么他们is的结果也是true，在范围外的，即使数值相同is的结果也会是false
+
+3. 深拷贝、浅拷贝
+	浅拷贝：  a = 111111  b = a  这样只是把a所指向的内存地址同时也让b指向，这样的就叫做浅拷贝
+	深拷贝：  import copy c = copy.deepcopy(a)  这样就是深拷贝，c跟a指向了不同的内存地址
+
+4. 进制
+	
+5. 原码、反码、补码
+	规则：
+	正数：原码 = 反码 = 补码
+	负数：反码 = 符号位不变，其他位取反
+			补码 = 反码 + 1
+
+6. 位运算
+
+7. 私有化
+	xx:共有变量
+	_x:单前置下划线，私有化属性或方法，from somemodule import * 禁止导入，类对象和子类可以访问
+	__x:双前置下划线，避免与子类中的属性名冲突，无法在外部直接访问(名字重整所以访问不到)
+	__x__:双前后下划线，用户命名空间的魔法对象属性。如：__init__, __不要自己发明这样的名字
+	xx_:单后置下划线，用于避免与Python关键词冲突
+
+	<如果在定义属性的时候在前面加了两个下划线，那么这个属性就是私有属性，不能在外面随便使用的,同样的方法也是>
+	<只要变量名称、方法名称中第一个是_开头的，这种在form  import * 这种场景下都是不能导入的，但是如果是import modulename的话 还是可以继续使用的>
+	<通过name mangling(名字重整(目的就是以防子类意外重写基类的方法或者属性)如：_Class_object)机制就可以访问private了>
+	class Test(object):
+		def __init__(self):
+			self.__num = 100
+		def setNum(self,newNum):
+			self.__num = newNum
+		def getNum(self):
+			return self.__num
+
+	t = Test()
+	print(t.getNum())
+	t.setNum(50)
+	print(t.getNum())
+
+8. 属性property
+	
+
+
+
+
+=============================================================================================================================================
+
+1. 迭代器
+	迭代是访问元素的一种方式，迭代器是一个可以记住遍历的位置的对象。迭代器对象从集合的第一个元素开始访问，直到所有的元素都被访问完结束。迭代器是能往前不会退后
+
+	可以被next()函数调用并且不断返回下一个值的对象称为迭代器：Iterator
+	可以使用isinstance()判断一个对象是否是lterator对象
+
+2. iter()函数
+	生成器都是Iterator对象，虽然list、dict、str都是Iterable，却不是Iterator
+	把list、dict、str等Iterable变成Iterator，可以使用iter()函数
+	<可迭代的对象不一定就是是迭代器，生成器一定是迭代对象>
+
+3. 闭包
+
+	def test(number):
+		def test_in(number_in):
+			print("in test_in 函数, number_in is %d"%number_in)
+			return number + number_in
+
+		return test_in
+
+	ret = test(100)
+	ret(1)
+	ret(2)
+	ret(199)
+
+	闭包的应用
+	def  line_conf(a, b):
+		def line(x):
+			return a*x + b
+		return line 
+
+4. 装饰器<>
+
+	案例函数
+	def w1(func):
+		def inner():
+			print('-----正在进行验证-----')
+			func()
+		return inner
+	def f1():
+		print('--------f1--------')
+	def f2():
+		print("--------f2--------")
+
+	f1 = w1(f1)
+	f1()
+
+	//上面的这段代码其实等价于
+	def w1(func):
+		def inner():
+			print('-----正在进行验证-----')
+			func()
+		return inner
+	
+	@w1     #相当于f1 = w1(f1)  这就是语法糖
+	def f1():
+		print('--------f1--------')
+	@w1	
+	def f2():
+		print("--------f2--------")
+
+	f1()
+	f2()
+
+5. 修饰器修饰无参数的函数
