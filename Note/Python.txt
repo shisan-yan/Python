@@ -127,3 +127,94 @@
 	f2()
 
 5. 修饰器修饰无参数的函数
+	def func(functionName):
+		print("-------func--------1")
+		def func_in():
+			print("------func_in----------1")
+			functionName()
+		print("------func------------2")
+		return func_in
+	@func
+	def test():
+		print("------test-------")
+
+6. 使用装饰器修饰有参数的函数进行装饰
+	
+7. 使用装饰器对有返回值的函数进行装饰
+	def func(functioname):
+		print("-----func1------")
+		def  func_in():
+			print("------func_in1------")
+			xxx = functionname()
+			print("------func_in2------")
+			return xxxx
+		print("------func_2------")
+		return func_in
+	@func
+	def test():
+		print('------test------')
+		return 'haha'
+	ret = test()
+
+8. 通用装饰器
+	def func(functionName):
+		def func_in(*args, **kwargs):
+			ret = functionName(*args, **kwargs)
+			return ret
+		retrun func_in
+	@func
+	def test():
+		print("----test----")
+		return 'haha'
+	@func
+	def test2():
+		print("----test2----")
+	@func 
+	def test3(a):
+		print("----test3----a=%d"%a)
+
+	ret = test()
+	print('test return value is %s'%ret)
+
+	a = test2()
+	print("test2 return value is %s"%a)
+
+	test3(11)
+
+9. 作用域
+
+9.1 命名空间
+	globals、locals
+
+
+
+LEGB规则
+
+	locals --> enclosing function --> globals --> builtins
+	
+	locals: 当前所在命名空间(如函数、模块)，函数的参数也属于命名空间内的变量
+	
+	enclosing：外部嵌套函数的命名空间（闭包中常见）
+		def fun1():
+			a = 10
+			def fun2():
+				#a位于外部嵌套函数的命名空间
+				print(a)
+
+	globals：全局变量，函数定义所在模块的命名空间
+		a  = 1
+		def fun():
+			#需要通过global指令来声明全局变量
+			global a
+			#修改全局变量，而不是创建一个新的local变量
+			a = 2
+	builtins：内嵌
+
+9. Python是动态语言
+
+	9.1 动态语言的定义
+	动态语言是高级程序设计语言，它是一类在运行时可以改变其结构的语言：例如新的函数、对象、甚至代码可以被引进。已有的函数可以被删除或是其他结构上的变化。
+
+	
+10. 生成器
+	通过列表升成式，我们可以直接创建一个列表。但是，受到内存的限制，列表的容量是有限的。而且，创建一个包含100W个元素的列表，不近占用很大的内存空间，而且我们很多时候可能只是为了访问其中的几个元素，这样也极大的浪费了内存资源。在Python中有一种机制可以一边循环一边计算，这种机制我们称之为生成器，generator
