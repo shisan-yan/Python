@@ -1,6 +1,7 @@
 															Python笔记<One To Go>
 
 Add By 2017-09-06
+change01 : 所有的笔记内容开始以Python3为基础<2017-11-28>
 
 1. 变量
 	1.1 局部变量
@@ -154,11 +155,511 @@ Add By 2017-09-06
 	__str__
 
 	
+	隐藏属性
+		再给类定义属性的时候，最好写在方法中，让调用者通过调用方法的方式来给属性赋值；这样我们可以校验赋值的合法性，防止传入非法的变量值
+	
+	私有方法
+		在方法的名称前面加上两个下划线为__这样的方法称之为私有方法
+
+
+	__del__方法
+		在对象消除的时候，会自动调用此对象的__del__方法
+	class dog:
+		def __del__(self):
+			print 'dog is died'
+
+		dog1 = dog()
+		dog2 = dog1
+
+		del dog1
+		del dog2
+		print "+++++++++++++++++"
+
+
+	继承
+		class parent:
+			def drink(self):
+				print 'drink'
+
+		class child(parent):
+			def eat(self):
+				print 'eat'
+
+		obj = child()
+		obj.drink()
+		obj.eat()
+
+	重写
+		继承了父类之后，重新定义了相同的方法，这就叫做重写
+
+	调用被重写的方法
+
+		class parent:
+			def  eat(self):
+				print 'eat'
+
+		class child:
+			def eat(self):
+				print 'child eat'
+
+				#第一种方式
+				parent.eat(self)
+
+				#第二种方式
+				super().eat()
+
+	私有方法、属性在继承中的表现
+		私有方法、属性并不会被继承
+
+	多继承
+		class A：
+
+		class B:
+
+		class C(A,B):
+
+	多态
+		class dog:
+			def print_self(self):
+				print '这是dog类！！'
+
+		class xiaotq:
+			def print_self(self):
+				print '这是哮天犬！！'
+
+		def introduct(temp):
+			temp.print_self()   #调用的方法固定，但是调用的对象根据传参的方式加入进来，这就是多态
+
+		dog1 = dog()
+		dog2 = xiaotq()
+		introduct(dog1)
+		introduct(dog2)
+
+	类属性、实例属性
+		class  Tool(objecg):
+			#属性
+			num = 0
+
+			#方法
+			def __init__(self,new_name):
+				self.name = new_name
+				Tool.num += 1
+		tool1 = Tool('name1')
+		tool2 = Tool('name2')
+		tool3 = Tool('name3')
+
+	实例方法、类方法、静态方法
+		class Game(object):
+			
+			#类属性
+			num = 0
+
+			#实例方法
+			def __init__(self):
+				#实例属性
+				self.name = 'laowang'
+
+			#类方法
+			@classmethod
+			def add_num(cls):
+				cls.num = 100
+
+		game = Game()
+		Game.add_num()
+		print(Game.num)
+
+	__new__和__init__方法
+		__new__ 
+
+	单例
+		class Dog(object):
+			__instance = None
+
+			def __new__(cls):
+				if cls.__instance == None:
+					cls.__instance == 1
+					return obj.__instance
+				else:
+					return cls.__instance
+
+
+		a = Dog()
+		print(id(a))
+		b = Dog()
+		print(id(b))
+
+10. 异常处理
+	try:
+		xxxxxx
+		xxxxxx
+	expect (NameError,IOError):
+		xxxxxxxx         捕获指定的异常
+	expect	Expection as ret:
+		xxxxxxxxxxxxx    捕获所有的异常
+		print(ret)       ret为系统报错的具体详情
+	else:  
+		xxxxxxxx         没有异常才会执行
+	finally:
+		xxxxxxxx		 不管有没有异常，都会执行此段代码
+
+11. 模块
+	import  module      导入一个模块
+	moduele.function()  调用模块方法的形式
+
+	from module import function  导入模块的某个模块
+	function()          调用模块方法的形式
+
+	from module import * 导入模块下的所有的方法
+	function()         调用模块方法的形式
+
+12. __name__ 
+	当直接执行本模块文件的时候，__name__的值为__main__
+	当通过其他的方法调用模块的时候，模块文件中的__name__的值为模块的名字
+
+13. __all__  
+	格式:__all__ = ["function","function2"."class1"]
+	在模块中写入此语句，在被其他模块导入的时候，除了list中的方法，其他的方法不会被导入，可以防止导入不需要导入的模块,同样的方法也是一样的规则
+
+14. __init__.py(包)
+	一个有__init__.py文件的目录就被称之为包<Python3中可以不加，但是Python2中必须要有，否则无法导入>
+
+	__init__.py中定义的语句在导入包的时候，里面的语句会被先执行
+	
+	如果在__init__.py中定义__all__变量的值如：__all__ = ['module1','module2']  那么除了list中的模块，其他的模块是不允许被导入的
+
+15. 模块的发布
+	setup.py
+		from distutils import setup
+
+		setup(name='XXXX',version='1.0',description='xxxx',author='xxxxx',py_modules['ssds.aa','dffgd.bb',xxxx])
+
+		py_modules中列表元素的含义是目录名.模块名 ，比如目录结果为
+			suds
+			|
+			|_____aa.py
+			dffgd
+			|
+			|____bb.py
+
+	构建模块
+		python setup.py build
+
+	生成发布压缩包
+		python setup.py  sdist
+
+16. 给程序传参
+	sys.argv
+
+	python test.py  1234
+
+	此时的sys.argv为一个列表，第一个的元素为脚本名称test.py，后面以空格为分隔符分别为跟接的参数
+
+17. 列表生成式
+	实例1：
+	a = [i for i in rang(1,18)]
+	
+	实例2：
+	b = [11 for i in rang(1.18)]
+	b = [11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11]
+
+	案例3：
+	c = [i for i in rang(10) if i%2==0]
+	c = [0,2,4,6,8]
+
+	案例4：
+	d = [i for i in range(3) for j in range(2)]
+	d = [0,0,1,1,2,2]
+
+	案例5：
+	e = [(i,j) for i in range(3) for j in range(2)]
+	e = [(0, 0), (0, 1), (1, 0), (1, 1), (2, 0), (2, 1)]
+
+18.  集合、列表、元组
+	
+	列表去重
+
+
+
+
+###############################################Python核心编程################################################################
+
+1. 模块重新导入
+	如果在导入模块之后，程序退出之前对模块进行了修改；那么程序后面执行的内容还是原模块中的代码，新修改的内容是没法读取到的,即使在程序中重新导入，只要程序没有重新运行，也是不行的；此时我们就需要借助reload的功能把模块重新导入加载
+
+	from imp import *
+
+	reload(test)
+
+2. 模块循环导入问题
+	程序设计上分层，降低耦合
+	导入语句放在后面，需要导入时再导入，例如放在函数体内导入
+
+3.  ==与is
+	==用来判断值是否相等
+	is用来判断指向的是不是同一个对象
+
+4. 深拷贝、浅拷贝
+	浅拷贝： 
+		a = [1,2,3,4]  b = a  此时 id(a)  等于id(b),并且b的值会随着a的值的变化而变化
+		
+	深拷贝：
+		import copy
+		c = copy.deepcopy(a)   
+		此时，id(a) 不等于id(c),并且c的值也不会随着a的值的变化而变化
+
+5. copy和deepcopy的区别
+	copy后的值会随着变化而变化但是id的值却不一样
+	deepcopy值不会随便，并且id也不一样
+
+6. 私有化
+	XX：公有变量
+	_x：单前置下划线，私有化属性或方法，from somemodule import * 禁止导入，类对象和子类可以访问
+	__xx：双前置下划线，避免与子类中的属性名冲突，无法在外部直接访问(名字重整所以访问不到)
+	__xx__:双前后下划线，用户名字空间的魔法对象或属性。例如：__init__
+	xx_：单后置下划线，用于避免与Python关键词的冲突
+
+7. 属性property
+	getattr
+		在获取属性值的时候自动首先调用此方法
+	setattr
+		在设置属性值的时候自动首先调用此方法
+	案例：
+		class test(object):
+			def __init__(self):
+				self._num = 100
+
+			def setNum(self,num):
+				print 'set the property num'
+				self._num = num
+
+			def getNum(self):
+				print 'get the property num'
+
+			t = property(getNum,setNum)
+
+			test = test()
+			test.t
+			test.t = 100
+
+8. property的使用
+	class test(object):
+			def __init__(self):
+				self._num = 100
+
+			@t.setattr
+			def t(self,num):
+				print 'set the property num'
+				self._num = num
+
+			@property		
+			def t(self):
+				print 'get the property num'
+
+			t = property(getNum,setNum)
+
+			test = test()
+			test.t
+			test.t = 100
+	这样写等同于7中的写法，只不过是通过装饰器来实现
+
+9. 迭代器
+	1. 可迭代对象
+		一类是集合数据类型。如list、tuple、dict、set、str等
+		一类是generator，包括生成器和带yield的generator function
+		这些可以直接用于for循环的对象统称为可迭代对象：Iterable
+
+		判断是否可迭代isinstance 
+			from  collections import It
+			isinstance('abc',Iterable)
+
+	2. 迭代器	
+		可以被next()函数调用并不断返回下一个值的对象被称为迭代器:Iterator
+
+		判断对象是否为迭代器
+			from  collections import It
+			isinstance('abc',Iterator)
+
+	3. iter()函数
+		生成器都是Itertor对象，但list、dict、str虽然是Iteraable但是却不是Iterator
+		把list、dict、str变成Itertor，可以使用iter()
+
+		a = [1,2,3,4,54,65]
+		b = iter(a)
+
+10. 闭包
+	def test(num):
+		print '1111111111'
+		print num
+
+		def t(Lnum):
+			print '2222222'
+			print num + Lnum
+		return t
+	ret = test(100)
+	ret(200)
+
+	如上面案例中，在函数中再次定义函数，并且还用到了上一层函数的变量；这样的函数就是闭包
+
+11. 装饰器
+	def w1(func):
+		def inner():
+			print '正在验证------------------'
+
+		return innner                                  #这里其实为一个闭包函数
+
+	@w1         #语法糖
+	def f1():
+		print '------f1--------'
+
+	@w1 
+	def f2():
+		print '-------f2-------'
+
+	这样我们就通过装饰器的方式实现了每次的验证
+
+12. 使用装饰器装饰无参数的函数
+	
+13. 使用装饰器对有返回值的函数进行装饰
+	
+14， 通用装饰器
+	
+15. 带有参数的解释器
+
+16. 作用域
+	命名空间
+	LEGB规则
+		locals----> enclosimg---->globals---->builtins
+		局部的、闭包内的、全局的、内嵌的
+
+17. Python动态添加属性跟方法
+	
+18. types.MethodType的作用
+
+19. __slots__的作用
+	默认情况下，Python给类添加属性是可以没有限制的添加的；如果我们需要限制一个对象只能添加指定的属性，那么我们可以通过__slots__来实现
+	
+	class Person(object):
+		__slots__ = ("name",'age')   这样就只能给Persion添加name跟age这两个属性了，不允许添加其他的属性
+
+	使用__slots__要注意：__slots__定义的属性仅对当前类实例起作用，对继承的子类和是不起作用的
+
+20. 生成器
+	创建方式：
+		把列表生成式的[]改成()  
+			如 a = (x for x in rang(10))
+		yeild
+			def createNum():
+				print '--------start---------'
+				a,b = 0,1
+
+				for i in range(5):
+					print '-------1-------'
+					yield b                 
+					print '-------2-------'
+					a,b = b,a+b
+					print '-------3-------'
+				print '-------stop---------'
+		上面的例子中，yield的作用：1. 当调用一次next()的时候，到yield的时候程序停止，并且返回yield后面的变量的值；当再次执行next()的时候，程序从yield后面的语句开始执行，到yield停止，如此反复一直到循环结束为止！
+
+21. 使用send
+
+22. yield的实际作用<协程>
+	def test1():
+		while True:
+			print '------1--------'
+			yield None
+
+	def test2():
+		while True:
+			print '-------2---------'
+			yield None
+
+	t1 = test1()
+	t2 = test2()
+	while True:
+		t1.__next__()
+		t2.__next__()
+
+23. 类装饰器
+	
+24. 元类
+	元类的使用场景：
+		拦截类的创建
+		修改类
+		返回修改之后的类
+
+25. 垃圾回收
+	小整数对象池
+		Python对小整数的定义是[-5,257)这些整数对象是提前建立好的，不会被垃圾回收.在一个Python的程序中，所有位于这个范围内的整数使用的都是同一个对象
+		同样，单个字母也是这样的。
+		但是当定义2个相同的字符串时，引用数为0时，触发垃圾回收
+	大整数对象池
+		每一个大整数，均创建一个新的对象
+	itern机制
+		比如我们赋值一个变量为一个字符串,A = 'helloword' B = 'helloword';他只占用一个'helloword'所占的内存空间，靠引用计数去维护何时释放
+
+	总结：
+		小整数[-5,257)共用对象，常驻内存
+		单个字符共用对象，常驻内存
+		当个单词，不可修改，默认开始itern机制，共用对象，引用数为0，则销毁
+
+26. GC垃圾回收	
+
+27. GC隔代回收
+
+28. 内建属性
+	
+29. getattribute
+
+30. 内建函数
+	range、map、filter、reduce、sorted、
+
+31. 集合set
+
+32. functools
+	
+33. 常见模块
+	
+
+===========================================================Linux系统编程==========================================================
+1. pdb调试
+	pdb是基于命令行的调试工具，类似于gnu的gdb	
+
+	运行方式：
+		python -m pdb  scriptName
+
+	命令行参数
+		l   显示当前的代码
+		n   向下执行一行代码
+		c   继续执行代码
+		b   添加断点
+		clear  删除断点
+		p   打印一个变量的值
+		s   进入到一个函数
+		a   打印所有的形参数据
+	import pdb
+	pdb.run()
+
+2. pep8规则
+
+3. 多任务
+	并行
+
+	并发
+
+4. fork创建子进程
+	程序
+		编写完毕的代码，在没运行的时候。称之为程序
+	进程
+		正在运行着的代码，就成为进程
 
 
 
 
 
+
+	
+	
 
 
 
