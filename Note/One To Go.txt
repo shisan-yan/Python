@@ -653,16 +653,228 @@ change01 : 所有的笔记内容开始以Python3为基础<2017-11-28>
 	进程
 		正在运行着的代码，就成为进程
 
+  1 #!/usr/bin/env python
+  2 
+  3 import os
+  4 import time
+  5 
+  6 ret = os.fork()
+  7 
+  8 if ret == 0:
+  9     while True:
+ 10         print '------------1----------'
+ 11         time.sleep(1)
+ 12 else:
+ 13     while True:
+ 14         print '-------------2-----------'
+ 15         time.sleep(1)
 
+5. getpid、getppid
+	getpid  获取子进程ID
+	getppid 获取父进程ID
 
+6. 全局变量在多个进程中不共享
 
+7. 多次fork
+	#!/usr/bin/env python
 
+	import os
+	#父进程
+	ret = os.fork()
 
+	if ret == 0:
+		#子进程
+	    print '-----------1---------'
+	else:
+		#父进程
+	    print '------------2----------'
+
+	#父进程、子进程
+	ret = os.fork()
+
+	if ret == 0:
+		#父进程、子进程
+	    print '-------11---------'
+	else:
+		#父进程的子进程、子进程的子进程
+	    print '-------22----------'
 	
+8. multiprocessing
 	
+	fork只有在类Unix系统中才会有，在windows平台中不适用，Python提供了一个解决方法multiprocessing，他可以支持跨平台使用
 
+	from multiprocessing import Process
+	import time
+	
+	def test():
+		while True:
+			print '--------'
+			time.sleep(2)
 
+	p = Porcess(target=test)
+	p.start()  #让这个进程开始执行test函数里的代码
 
+	while True:
+		print '------main-------'
+		time.sleep(1)
 
+9. 主进程等待Process子进程先结束
+	multiprocessing创建出来的子进程去执行代码。主进程会等待Process子进程先结束
 
+10. Process
+	
+	常用方法
+		p = Process(target=test)
+
+		p.start()                 #开始执行
+		p.is_alive()              #判断进程是否还在执行
+		p.join([timeout])         #堵塞，等待上面的进程执行完成后再继续往下执行,timeout为等待多久后如果还没执行完也继续往下执行
+		p.run()                   #如果没有给定target参数，对这个对象调用start()方法时，就将执行对象中的run()方法
+		p.terminate()             #不管任务是否完成，立即终止
+
+	常用属性
+		name:当前进程实例别名，默认为Process-N,N为1开始递增的整数
+		pid：当前进程实例的PID值
+
+11. Process子类创建子进程
+	#!/usr/bin/env python
+
+	from multiprocessing import Process
+	import os
+	import time
+
+	class Process_Class(Process):
+
+		def __init__(self,interval):
+			Process.__init__(self)
+			self.interval = interval
+
+		def run(self):
+			print '子进程(%s) 开始执行，父进程为(%s)'%(os.getpid(),os.getppid())
+			t_start = time.time()
+			time.sleep(slef.interval)
+			t_stop = time.time()
+			print '(%s)程序执行结束，耗时%0.2f秒'%(os.getpid(),t_stop-t_start)
+
+		if __name = '__main__':
+			t_start = time.time()
+			print '当前成进程(%s)'%os.getpid()
+
+			p1 = Process_Class(2)
+
+			p1.start()
+
+			p1.join()
+
+			t_stop = time.time()
+
+			print '(%s)执行结束，耗时%0.2f'%(os.getpid(),t_stop-t_start)
+
+12. 进程池
+	#!/usr/bin/env python
+
+	from multiprocessing import Pool
+	import os,time,random
+
+	def worker(msg):
+	    t_start = time.time()
+	    print '%s start run,the pid is %d'%(msg,os.getpid())
+
+	    time.sleep(random.random()*2)
+	    t_stop = time.time()
+	    print 'msg,run end!,use time %0.2f'%(t_stop-t_start)
+
+	po = Pool(3)    #定义一个进程池，最大进程数3
+
+	for i in range(0,10):
+		#apply_async(需要调用的目标,(传递给目标的参数元组))
+		#每次循环将会用空闲出来的子进程去调用目标
+	    po.apply_async(worker,(i,))
+
+	print '-------start--------'
+	po.close()		#关闭进程池，关闭后po不再接受新的请求
+	po.join()		#等待po将所有子进程执行完毕，必须放在close语句之后  <主进程 创建/添加 任务后，主进程默认不会等待进程池中的任务执行完毕后才结束，而是 当主进程任务做完之后，立刻结束；如果这个地方没有join，会导致进程池中的任务不会被执行>
+	
+	print '--------end--------'
+
+13. 多种方式的比较
+	fork()
+		只能在类Unix系统中使用，不跨平台
+	Process()
+		主进程、子进程同时处理任务
+	Pool()
+		主进程一般用来等待，真正的任务都在子进程中进行
+
+14. apply堵塞式添加任务
+	
+	po.apply(worker,(i,))
+
+15. 进程间的互相通信Queue
+	#!/usr/bin/env python3
+
+	from multiprocessing import Process,Queue
+	import os,time,random
+
+	def write(q):
+	    for value in ['A','B','C']:
+	        print('put %s to queue.....'%value)
+	        q.put(value)
+	        time.sleep(random.random())
+
+	def read(q):
+	    while True:
+	        if not q.empty():
+	            value = q.get(True)
+	            print('Get %s from queue'%value)
+	            time.sleep(random.random())
+	        else:
+	            break
+
+	if __name__ == '__main__':
+
+	    q = Queue()
+	    pw = Process(target=write,args=(q,))
+	    pr = Process(target=read,args=(q,))
+
+	    pw.start()
+	    pw.join()
+
+	    pr.start()
+	    pr.join()
+
+	    print('')
+	    print('所有数据都输入并且读取完成')
+
+16. 进程池中的Queue
+	如果使用Pool创建进程，就需要使用multiprocessing.Manager()中的Queue(),而不是multipro.Queue()
+
+	#!/usr/bin/env python3
+
+	from multiprocessing import Manager,Pool
+	import os,time,random
+
+	def reader(q):
+	    print('reader启动(%s),父进程为(%s)'%(os.getpid(),os.getppid()))
+	    for i in range(q.qsize()):
+	        print('reader从Queue获得到消息：%s'%q.get(True))
+
+	def write(q):
+	    print('writer启动(%s),父进程为(%s)'%(os.getpid(),os.getppid()))
+	    for i in 'rander':
+	        q.put(i)
+
+	if __name__ == '__main__':
+
+	    print("(%s) start"%os.getpid())
+	    q=Manager().Queue()
+
+	    po=Pool()
+
+	    po.apply(write,(q,))
+	    po.apply(reader,(q,))
+	    po.close()
+	    po.join()
+	    print("(%s) End"%os.getpid())
+
+17. 
 
