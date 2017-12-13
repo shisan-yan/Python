@@ -868,7 +868,7 @@ change01 : 所有的笔记内容开始以Python3为基础<2017-11-28>
 	    print('')
 	    print('所有数据都输入并且读取完成')
 
-16. 进程池中的Queue
+16. 进程池中的Queue-->Manager().Queue()
 	如果使用Pool创建进程，就需要使用multiprocessing.Manager()中的Queue(),而不是multipro.Queue()
 
 	#!/usr/bin/env python3
@@ -899,5 +899,6 @@ change01 : 所有的笔记内容开始以Python3为基础<2017-11-28>
 	    po.join()
 	    print("(%s) End"%os.getpid())
 
-17. 
+17. 多进程copy文件
+	
 
