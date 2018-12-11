@@ -1,0 +1,33 @@
+Django框架中，在setting里面的INSTALLD_APPS默认包含了自带的应用
+	django.contrib.admin -- 管理员站点， 你很快就会使用它。
+	django.contrib.auth -- 认证授权系统。
+	django.contrib.contenttypes -- 内容类型框架。
+	django.contrib.sessions -- 会话框架。
+	django.contrib.messages -- 消息框架。
+	django.contrib.staticfiles -- 管理静态文件的框架。
+
+INSTALLD_APPS中的应用至少需要一张数据表才能有用，所以我们在使用这些APPS之前应该先执行 Python manage.py migrate 来生成数据表后再来使用
+
+如果我们需要在自己的项目中创建自己的数据库
+	第一：在项目的models.py中定义好表跟表的字段格式<每个表对应一个class>
+	第二：在settings.py中注册我们的APP，INSTALLED_APPS中
+	第三：执行python manag.py makemigrations appname 来激活我们的模型
+
+执行python manage.py  sqlmigrate polls 0001  我们可以看到项目中所有数据库的建表语句<migrate其实是迁移数据库的应用，0001表示迁移的第一步会做的具体事情。只会列出不会真正执行>
+
+改变数据库模型需要以下三个步骤：
+	1. 编辑models.py文件，修改模型
+	2. 运行 python manage.py makemigrations 为模型的改变生成迁移文件
+	3. 运行python manage.py migrate 来应用数据库迁移
+
+如果我们在项目中心增加或者修改了数据库中的表或字段，我们重新执行下python manage.py migrate  让具体的修改落实到数据库中来生效
+
+Django 提供了一个自主的admin管理后台。如果我们想借助这个后台去管理数据库，我们需要在app下的admin.py中添加类似这样的设置
+	from .models import tablename
+	admin.site.register(tablename)
+
+request.POST是一个类字典，可以通过关键字的名字获取提交的数据。request.POST的值永远是字符串。如果request.POST['choice_id']中的key没有定义，则会有一个keyError的错误
+
+
+
+
